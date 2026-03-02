@@ -1,0 +1,57 @@
+{
+  "name": "pi-startup-redraw-fix",
+  "version": "0.1.0",
+  "description": "Pi extension that patches terminal full-clear ordering to avoid startup redraw glitches.",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "files": [
+    "index.ts",
+    "src",
+    "config/config.example.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npx --yes -p typescript@5.7.3 tsc -p tsconfig.json --noCheck",
+    "lint": "npm run build",
+    "test": "node --test",
+    "check": "npm run lint && npm run test"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-extension",
+    "terminal",
+    "startup",
+    "redraw"
+  ],
+  "author": "MasuRii",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasuRii/pi-startup-redraw-fix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MasuRii/pi-startup-redraw-fix/issues"
+  },
+  "homepage": "https://github.com/MasuRii/pi-startup-redraw-fix#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*"
+  }
+}
