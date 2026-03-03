@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.3] - 2026-03-04
+
+### Fixed
+- Use absolute GitHub raw URL for README image to fix npm display
+
 ## [0.1.2] - 2026-03-04
 
 ### Changed

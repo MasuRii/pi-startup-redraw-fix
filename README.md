@@ -2,7 +2,7 @@
 
 A Pi coding agent extension that patches terminal full-clear escape sequence ordering to prevent startup redraw glitches in certain terminal emulators.
 
-![Terminal startup fix demonstration](asset/pi-startup-redraw-fix.png)
+![Terminal startup fix demonstration](https://raw.githubusercontent.com/MasuRii/pi-startup-redraw-fix/main/asset/pi-startup-redraw-fix.png)
 
 ## Table of Contents
 
