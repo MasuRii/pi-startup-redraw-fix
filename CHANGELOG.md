@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2] - 2026-03-04
+
+### Changed
+- Rewrote README.md with professional documentation standards
+- Added comprehensive feature documentation, configuration reference, and usage examples
+
 ## 0.1.1
 
 - Added `asset/` to the npm `files` whitelist so README image assets are included in package tarballs.

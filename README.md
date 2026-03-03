@@ -1,63 +1,74 @@
 # pi-startup-redraw-fix
 
-Startup redraw / full-clear ordering fix for the Pi coding agent.
+A Pi coding agent extension that patches terminal full-clear escape sequence ordering to prevent startup redraw glitches in certain terminal emulators.
 
-This extension patches the terminal “full clear” escape sequence emitted during startup so the screen/scrollback clear happens in a stable order, avoiding redraw glitches in some terminal setups.
+![Terminal startup fix demonstration](asset/pi-startup-redraw-fix.png)
 
-![alt text](asset/pi-startup-redraw-fix.png)
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Technical Details](#technical-details)
+- [Troubleshooting](#troubleshooting)
+- [Development](#development)
+- [License](#license)
 
 ## Features
 
-- Normalizes the startup full-clear escape sequence order:
-  - **From:** `\x1b[3J\x1b[2J\x1b[H`
-  - **To:** `\x1b[H\x1b[2J\x1b[3J`
-- Applies the patch **once per Node process** by monkey-patching `ProcessTerminal.prototype.write`.
-- On `session_start`, shows a **UI warning** (when UI is available) if patching failed.
+- **Escape Sequence Normalization** — Reorders the startup full-clear sequence from `\x1b[3J\x1b[2J\x1b[H` to `\x1b[H\x1b[2J\x1b[3J` for stable screen clearing
+- **Idempotent Patching** — Applies the patch once per Node process via `ProcessTerminal.prototype.write` monkey-patching with internal flag guard
+- **Failure Notifications** — Displays a UI warning on `session_start` if the patch failed to apply
 
 ## Installation
 
-### Local extension folder
+### Extension Folder (Recommended)
 
-Place this folder in one of Pi’s auto-discovered extension locations:
+Place the extension folder in one of Pi's auto-discovered extension locations:
 
-- Global: `~/.pi/agent/extensions/pi-startup-redraw-fix`
-- Project: `.pi/extensions/pi-startup-redraw-fix`
+| Location | Path |
+|----------|------|
+| Global | `~/.pi/agent/extensions/pi-startup-redraw-fix` |
+| Project | `.pi/extensions/pi-startup-redraw-fix` |
 
-If you keep it elsewhere, add the path to your Pi settings `extensions` array.
+Alternatively, add the path to your Pi settings `extensions` array.
 
-### As an npm package
+### npm Package
 
 ```bash
 pi install npm:pi-startup-redraw-fix
 ```
 
-Or from git:
+### Git Repository
 
 ```bash
 pi install git:github.com/MasuRii/pi-startup-redraw-fix
 ```
 
-(For development or non-Pi environments, `npm i pi-startup-redraw-fix` also works.)
-
 ## Usage
 
-This extension has **no commands**.
+This extension operates automatically with **no commands required**.
 
-When the extension is loaded, it immediately attempts to patch `ProcessTerminal.prototype.write`. On each new session (`session_start`), if Pi has a UI and the patch did not apply, it emits a warning notification.
+When loaded, the extension immediately patches `ProcessTerminal.prototype.write` to intercept and normalize terminal clear sequences. If the patch fails, a warning notification appears at each session start (when UI is available).
 
 ## Configuration
 
-### Enable / disable
+Configuration is stored at `config.json` alongside the extension:
 
-Runtime config is stored alongside the extension at:
+```
+~/.pi/agent/extensions/pi-startup-redraw-fix/config.json
+```
 
-- `~/.pi/agent/extensions/pi-startup-redraw-fix/config.json`
+A template is provided at `config/config.example.json`.
 
-A starter template is included at:
+### Options
 
-- `config/config.example.json`
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | boolean | `true` | Enable or disable the extension |
 
-Minimal config:
+### Example Configuration
 
 ```json
 {
@@ -65,74 +76,77 @@ Minimal config:
 }
 ```
 
-Notes:
+> **Note:** If your Pi build does not honor the `enabled` flag, disable the extension by removing it from your Pi settings `extensions` list or uninstalling it.
 
-- In environments where Pi honors an extension-local `enabled` flag, set `"enabled": false` to disable the extension.
-- If your Pi build does not use `enabled` for extension loading, disable by removing the extension from your Pi settings `extensions` list (or by uninstalling it).
+## Technical Details
 
-## How it works (high level)
+### How It Works
 
-Pi’s TUI uses `@mariozechner/pi-tui`’s `ProcessTerminal` to write escape sequences to the terminal.
+Pi's TUI uses `@mariozechner/pi-tui`'s `ProcessTerminal` class to write escape sequences to the terminal. This extension wraps `ProcessTerminal.prototype.write` to normalize the clear sequence order:
 
-This extension:
+| Original Sequence | Fixed Sequence |
+|-------------------|----------------|
+| `ESC[3J` (clear scrollback) | `ESC[H` (cursor home) |
+| `ESC[2J` (clear screen) | `ESC[2J` (clear screen) |
+| `ESC[H` (cursor home) | `ESC[3J` (clear scrollback) |
 
-1. Wraps `ProcessTerminal.prototype.write`.
-2. For each write, replaces any occurrence of the exact “broken” full-clear sequence:
-   - `ESC [ 3 J` (clear scrollback)
-   - `ESC [ 2 J` (clear screen)
-   - `ESC [ H` (cursor home)
-3. With the “fixed” order:
-   - `ESC [ H` (cursor home)
-   - `ESC [ 2 J` (clear screen)
-   - `ESC [ 3 J` (clear scrollback)
+The reordering ensures the cursor moves home before clearing, which resolves redraw glitches on certain terminal emulators.
 
-The patch is guarded by an internal flag so it is **idempotent** (loading the extension multiple times will not stack-wrap `write`).
+### Architecture
 
-## Limitations / compatibility
+| File | Purpose |
+|------|---------|
+| `index.ts` | Root entrypoint for Pi auto-discovery |
+| `src/index.ts` | Extension bootstrap and session warning handler |
+| `src/terminal-clear-patch.ts` | Monkey-patch implementation with idempotency guard |
+| `src/normalize-clear-sequence.ts` | String replacement utility |
+| `src/constants.ts` | Escape sequence definitions |
 
-- Only affects data written via `ProcessTerminal.prototype.write`.
-- Only rewrites the **exact** byte sequence `\x1b[3J\x1b[2J\x1b[H`.
-  - If your terminal redraw issue is caused by different escape sequences, this extension will not help.
-- If `ProcessTerminal.write` is not available (or the underlying API changes), the patch will fail and you’ll see a warning on `session_start` (when UI is available).
+### Limitations
+
+- Only affects data written via `ProcessTerminal.prototype.write`
+- Only rewrites the exact byte sequence `\x1b[3J\x1b[2J\x1b[H`
+- Will not help if redraw issues are caused by different escape sequences
+- Patch fails if `ProcessTerminal.write` is unavailable or the API changes
 
 ## Troubleshooting
 
-### I see a warning: “failed to patch terminal clear sequence …”
+### Warning: "failed to patch terminal clear sequence …"
 
-This warning is shown on `session_start` when:
+This warning appears on `session_start` when the extension cannot patch `ProcessTerminal.prototype.write`.
 
-- Pi has a UI (`ctx.hasUI`), and
-- the extension could not patch `ProcessTerminal.prototype.write`.
+**Possible Causes:**
 
-Common causes:
+- Incompatible Pi or `@mariozechner/pi-tui` version where `ProcessTerminal.write` is missing or changed
+- Another extension modified the terminal layer unexpectedly
 
-- Incompatible Pi / `@mariozechner/pi-tui` version where `ProcessTerminal.write` is missing or changed.
-- Another extension or runtime modified the terminal layer in an unexpected way.
+**Solutions:**
 
-What to try:
-
-1. Update Pi and your extensions.
-2. Temporarily disable other terminal/TUI-related extensions to identify conflicts.
-3. Verify the extension is actually being loaded (installed to an auto-discovery folder or referenced in your Pi settings).
+1. Update Pi and all extensions to latest versions
+2. Temporarily disable other terminal/TUI-related extensions to identify conflicts
+3. Verify the extension is loaded from an auto-discovery folder or referenced in Pi settings
 
 ## Development
 
 ```bash
+# Build TypeScript
 npm run build
+
+# Run linter
 npm run lint
+
+# Run tests
 npm run test
+
+# Run all checks
 npm run check
 ```
 
-## Project layout
+### Requirements
 
-- `index.ts` — root entrypoint (kept for Pi auto-discovery / package export)
-- `src/index.ts` — extension bootstrap + `session_start` warning notification
-- `src/terminal-clear-patch.ts` — `ProcessTerminal.prototype.write` monkey-patch + idempotency guard
-- `src/normalize-clear-sequence.ts` — string rewrite helper
-- `src/constants.ts` — escape sequence constants
-- `config/config.example.json` — starter config template
+- Node.js ≥ 20
+- Peer dependencies: `@mariozechner/pi-coding-agent`, `@mariozechner/pi-tui`
 
 ## License
 
-MIT
+[MIT](LICENSE)
