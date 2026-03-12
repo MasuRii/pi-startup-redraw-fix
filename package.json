@@ -1,6 +1,6 @@
 {
   "name": "pi-startup-redraw-fix",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Pi extension that patches terminal full-clear ordering to avoid startup redraw glitches.",
   "type": "module",
   "main": "./index.ts",

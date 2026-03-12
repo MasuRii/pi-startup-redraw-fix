@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-03-12
+
+### Changed
+- Updated AWS SDK and related dependencies
+
 ## [0.1.3] - 2026-03-04
 
 ### Fixed
