@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.5] - 2026-03-23
+
+### Changed
+- Updated `@mariozechner/pi-coding-agent` and `@mariozechner/pi-tui` peer dependencies to ^0.62.0
+
 ## [0.1.4] - 2026-03-12
 
 ### Changed
