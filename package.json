@@ -26,9 +26,15 @@
     "pi-package",
     "pi",
     "pi-extension",
+    "pi-coding-agent",
+    "pi-tui",
+    "coding-agent",
     "terminal",
+    "terminal-emulator",
     "startup",
-    "redraw"
+    "startup-fix",
+    "redraw",
+    "bugfix"
   ],
   "author": "MasuRii",
   "license": "MIT",
