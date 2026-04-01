@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.7] - 2026-04-01
+
+### Changed
+- Updated npm keywords and package metadata for improved discoverability
+
 ## [0.1.6] - 2026-04-01
 
 ### Changed
