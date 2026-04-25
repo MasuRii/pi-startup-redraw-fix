@@ -30,7 +30,7 @@ Place the extension folder in one of Pi's auto-discovered extension locations:
 
 | Location | Path |
 |----------|------|
-| Global | `~/.pi/agent/extensions/pi-startup-redraw-fix` |
+| Global default | `~/.pi/agent/extensions/pi-startup-redraw-fix` (respects `PI_CODING_AGENT_DIR`) |
 | Project | `.pi/extensions/pi-startup-redraw-fix` |
 
 Alternatively, add the path to your Pi settings `extensions` array.
@@ -57,8 +57,9 @@ When loaded, the extension immediately patches `ProcessTerminal.prototype.write`
 
 Configuration is stored at `config.json` alongside the extension:
 
-```
-~/.pi/agent/extensions/pi-startup-redraw-fix/config.json
+```text
+Default global path: ~/.pi/agent/extensions/pi-startup-redraw-fix/config.json
+Actual global path: $PI_CODING_AGENT_DIR/extensions/pi-startup-redraw-fix/config.json when PI_CODING_AGENT_DIR is set
 ```
 
 A template is provided at `config/config.example.json`.
