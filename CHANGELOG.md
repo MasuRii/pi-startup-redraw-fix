@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.9] - 2026-04-25
+
+### Changed
+- Clarified the global extension path and `PI_CODING_AGENT_DIR` override behavior in README installation and configuration guidance
+- Updated `@mariozechner/pi-coding-agent` and `@mariozechner/pi-tui` peer dependencies to ^0.70.2
+
 ## [0.1.7] - 2026-04-01
 
 ### Changed
