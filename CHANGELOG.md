@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.10] - 2026-05-22
+
+### Changed
+- Aligned Pi peer dependency metadata with the `@earendil-works` Pi v0.75.4 extension runtime packages.
+
 ## [0.1.9] - 2026-04-25
 
 ### Changed
