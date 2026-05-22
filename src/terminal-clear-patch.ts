@@ -1,4 +1,4 @@
-import { ProcessTerminal } from "@mariozechner/pi-tui";
+import { ProcessTerminal } from "@earendil-works/pi-tui";
 
 import { normalizeTerminalClearSequence } from "./normalize-clear-sequence.js";
 
