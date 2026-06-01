@@ -1,6 +1,7 @@
 import { ProcessTerminal } from "@earendil-works/pi-tui";
 
-import { normalizeTerminalClearSequence } from "./normalize-clear-sequence.js";
+export const BROKEN_FULL_CLEAR_SEQUENCE = "\x1b[3J\x1b[2J\x1b[H";
+export const FIXED_FULL_CLEAR_SEQUENCE = "\x1b[H\x1b[2J\x1b[3J";
 
 const PATCH_FLAG_KEY = "__piStartupRedrawFixPatched__" as const;
 
@@ -12,6 +13,14 @@ export interface PatchResult {
   patched: boolean;
   alreadyPatched: boolean;
   error?: string;
+}
+
+export function normalizeTerminalClearSequence(data: string): string {
+  if (!data.includes(BROKEN_FULL_CLEAR_SEQUENCE)) {
+    return data;
+  }
+
+  return data.split(BROKEN_FULL_CLEAR_SEQUENCE).join(FIXED_FULL_CLEAR_SEQUENCE);
 }
 
 export function applyTerminalClearSequencePatch(): PatchResult {
