@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.12] - 2026-06-01
+
+### Changed
+- Consolidated clear-sequence constants and normalization into the terminal clear patch while preserving synchronous startup patching.
+- Widened peer dependency ranges to `^0.74.0 || ^0.75.0 || ^0.77.0 || ^0.78.0`.
+
 ## [0.1.11] - 2026-05-26
 
 ### Changed
