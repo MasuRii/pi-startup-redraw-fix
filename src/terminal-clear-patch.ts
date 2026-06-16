@@ -23,6 +23,23 @@ export function normalizeTerminalClearSequence(data: string): string {
   return data.split(BROKEN_FULL_CLEAR_SEQUENCE).join(FIXED_FULL_CLEAR_SEQUENCE);
 }
 
+function splitTrailingBrokenClearPrefix(data: string): { ready: string; pending: string } {
+  const maxPrefixLength = BROKEN_FULL_CLEAR_SEQUENCE.length - 1;
+  const maxCandidateLength = Math.min(maxPrefixLength, data.length);
+
+  for (let length = maxCandidateLength; length > 0; length -= 1) {
+    const suffix = data.slice(-length);
+    if (BROKEN_FULL_CLEAR_SEQUENCE.startsWith(suffix)) {
+      return {
+        ready: data.slice(0, -length),
+        pending: suffix,
+      };
+    }
+  }
+
+  return { ready: data, pending: "" };
+}
+
 export function applyTerminalClearSequencePatch(): PatchResult {
   const prototype = ProcessTerminal.prototype as ProcessTerminalPrototype;
 
@@ -39,12 +56,25 @@ export function applyTerminalClearSequencePatch(): PatchResult {
     };
   }
 
-  prototype.write = function patchedProcessTerminalWrite(data: string): void {
-    const normalized = typeof data === "string"
-      ? normalizeTerminalClearSequence(data)
-      : data;
+  let pendingClearPrefix = "";
 
-    originalWrite.call(this, normalized);
+  prototype.write = function patchedProcessTerminalWrite(data: string): void {
+    if (typeof data !== "string") {
+      if (pendingClearPrefix.length > 0) {
+        originalWrite.call(this, pendingClearPrefix);
+        pendingClearPrefix = "";
+      }
+      originalWrite.call(this, data);
+      return;
+    }
+
+    const combined = `${pendingClearPrefix}${data}`;
+    const { ready, pending } = splitTrailingBrokenClearPrefix(combined);
+    pendingClearPrefix = pending;
+
+    if (ready.length > 0) {
+      originalWrite.call(this, normalizeTerminalClearSequence(ready));
+    }
   };
 
   prototype[PATCH_FLAG_KEY] = true;

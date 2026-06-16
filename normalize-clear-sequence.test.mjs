@@ -42,3 +42,38 @@ test("applyTerminalClearSequencePatch wraps ProcessTerminal.write once and norma
     }
   }
 });
+
+test("applyTerminalClearSequencePatch normalizes a full-clear sequence split across adjacent writes", () => {
+  for (let splitIndex = 1; splitIndex < BROKEN_FULL_CLEAR_SEQUENCE.length; splitIndex += 1) {
+    const prototype = ProcessTerminal.prototype;
+    const originalWrite = prototype.write;
+    const originalPatched = prototype[PATCH_FLAG_KEY];
+    const writes = [];
+
+    try {
+      prototype.write = function writeFixture(data) {
+        writes.push(data);
+      };
+      delete prototype[PATCH_FLAG_KEY];
+
+      assert.deepEqual(applyTerminalClearSequencePatch(), { patched: true, alreadyPatched: false });
+
+      prototype.write(`before${BROKEN_FULL_CLEAR_SEQUENCE.slice(0, splitIndex)}`);
+      prototype.write(`${BROKEN_FULL_CLEAR_SEQUENCE.slice(splitIndex)}after`);
+
+      assert.equal(
+        writes.join(""),
+        `before${FIXED_FULL_CLEAR_SEQUENCE}after`,
+        `split index ${splitIndex} should not leak the broken clear ordering`,
+      );
+      assert.equal(writes.join("").includes(BROKEN_FULL_CLEAR_SEQUENCE), false);
+    } finally {
+      prototype.write = originalWrite;
+      if (originalPatched === undefined) {
+        delete prototype[PATCH_FLAG_KEY];
+      } else {
+        prototype[PATCH_FLAG_KEY] = originalPatched;
+      }
+    }
+  }
+});
