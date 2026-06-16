@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.1.13] - 2026-06-16
+
+### Fixed
+- Buffered trailing broken clear-sequence prefixes across multiple `write` calls so split escape sequences that arrive in separate chunks are correctly normalized instead of being silently discarded.
+
 ## [0.1.12] - 2026-06-01
 
 ### Changed
