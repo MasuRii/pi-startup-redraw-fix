@@ -20,7 +20,8 @@
     "build": "npx --yes -p typescript@5.7.3 tsc -p tsconfig.json --noCheck",
     "lint": "npm run build",
     "test": "npx --yes tsx --test normalize-clear-sequence.test.mjs",
-    "check": "npm run lint && npm run test"
+    "check": "npm run lint && npm run test",
+    "postinstall": "node -e \"const fs=require('fs'),cp=require('child_process'),p=require('path');const cwd=process.cwd();const normalized=cwd.split(p.sep).join('/');if(!normalized.includes('/.pi/agent/extensions/'))process.exit(0);const s=p.resolve(cwd,'../../scripts/patch-vulnerable-deps.mjs');if(!fs.existsSync(s))process.exit(0);const r=cp.spawnSync(process.execPath,[s,'--target',cwd,'--quiet'],{stdio:'inherit'});process.exit(r.status||0)\""
   },
   "keywords": [
     "pi-package",
@@ -58,7 +59,14 @@
     ]
   },
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "^0.74.0 || ^0.75.0 || ^0.77.0 || ^0.78.0 || ^0.79.0",
-    "@earendil-works/pi-tui": "^0.74.0 || ^0.75.0 || ^0.77.0 || ^0.78.0 || ^0.79.0"
+    "@earendil-works/pi-coding-agent": "^0.74.0 || ^0.75.0 || ^0.77.0 || ^0.78.0 || ^0.79.0 || ^0.80.0",
+    "@earendil-works/pi-tui": "^0.74.0 || ^0.75.0 || ^0.77.0 || ^0.78.0 || ^0.79.0 || ^0.80.0"
+  },
+  "overrides": {
+    "protobufjs": "7.6.3",
+    "ws": "8.21.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.80.3"
   }
 }
