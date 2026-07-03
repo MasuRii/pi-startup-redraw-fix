@@ -1,9 +1,17 @@
+<div align="center">
+
 # pi-startup-redraw-fix
 
-A Pi coding agent extension that patches terminal full-clear escape sequence ordering to prevent startup redraw glitches in certain terminal emulators.
+[![npm version](https://img.shields.io/npm/v/pi-startup-redraw-fix?style=for-the-badge)](https://www.npmjs.com/package/pi-startup-redraw-fix)
+[![License](https://img.shields.io/github/license/MasuRii/pi-startup-redraw-fix?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux%20%7C%20Windows-blue?style=for-the-badge)]()
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y01PSSVR)
+
+A Pi coding agent extension that patches terminal full-clear escape sequence ordering to prevent startup redraw glitches in certain terminal emulators.
 <img width="1360" height="752" alt="image" src="https://github.com/user-attachments/assets/05bfd443-052c-475e-bc80-3350cde5c642" />
 
+</div>
 
 ## Table of Contents
 
