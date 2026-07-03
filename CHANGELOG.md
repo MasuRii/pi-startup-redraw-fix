@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-03
+
+### Added
+- Added an `enabled` master toggle (defaults to `true`) that gates extension startup, and structured debug logging written to an extension-local `debug/` directory when `debug` is enabled. ([2d57235](https://github.com/MasuRii/pi-startup-redraw-fix/commit/2d57235b6b72b6ec28f0a5298228d8fafe828da5))
+
+### Changed
+- Widened Pi coding-agent and Pi TUI peer dependency ranges through `^0.80.0` and added a `postinstall` patch with npm `overrides` to resolve known vulnerabilities in transitive dependencies. ([2f1f400](https://github.com/MasuRii/pi-startup-redraw-fix/commit/2f1f400f804ee08b8f72f0f5d43ee6194de9b500))
+- Extracted a fresh-terminal fixture helper for the terminal clear-sequence tests. ([0fc323d](https://github.com/MasuRii/pi-startup-redraw-fix/commit/0fc323d19a74ed9e7cdf070cb57015261e22865f))
+- Updated README badge styling and added a ko-fi support button. ([0c3f0c3](https://github.com/MasuRii/pi-startup-redraw-fix/commit/0c3f0c36291a637dc47f2a5e8335eeb152e26244))
+
 ## [0.1.13] - 2026-06-16
 
 ### Fixed
